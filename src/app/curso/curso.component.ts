@@ -1,28 +1,57 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Curso } from './curso';
+import { CursoService } from './curso.service';
+
 @Component({
   selector: 'app-curso',
   templateUrl: './curso.component.html',
   styleUrls: ['./curso.component.css'],
 })
 export class CursoComponent implements OnInit {
-  constructor() {}
+  vetor: Curso[] = [];
 
-  ngOnInit(): void {}
+  curso = new Curso();
 
-  cadastro(): void {
-    alert('Cadastro');
+  constructor(private cursoService: CursoService) {}
+
+  ngOnInit() {
+    this.selecao();
   }
 
-  selecao(): void {
-    alert('Seleção');
+  cadastro(c: Curso) {
+    console.log(JSON.stringify(c));
+    this.cursoService.cadastrarCurso(c).subscribe((res: Curso[]) => {
+      this.vetor = res;
+
+      this.curso.nome = null;
+      this.curso.valor = null;
+
+      this.selecao;
+    });
+  }
+
+  selecao() {
+    this.cursoService.obterCurso().subscribe((res: Curso[]) => {
+      this.vetor = res;
+    });
   }
 
   alterar(): void {
     alert('Alterar');
   }
 
-  remover(): void {
-    alert('Remover');
+  remover(c: Curso) {
+    this.cursoService.removerCurso(c).subscribe((res: Curso[]) => {
+      this.vetor = res;
+      this.curso.nome = null;
+      this.curso.valor = null;
+    });
+  }
+
+  selecionarCurso(c: Curso) {
+    this.curso.id = c.id;
+    this.curso.nome = c.nome;
+    this.curso.valor = c.valor;
   }
 }
